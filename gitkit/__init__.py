@@ -4,7 +4,7 @@ import click, importlib
 def cli():
     pass
 
-for modname in ("gitkit.branches",):
+for modname in ("gitkit.branches", "gitkit.tags"):
 	module = importlib.import_module(modname)
 	getattr(module, "install")(cli)
 
