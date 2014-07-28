@@ -1,14 +1,14 @@
 import click
 import datetime
 import itertools
-from .util import run, yorn
+from .util import run, yorn, get_lines
 
 def reltag_list():
-	tags = run([
+	tags = get_lines([
 		"git",
 		"tag",
 		"-l",
-	]).splitlines()
+	])
 	return sorted([tag for tag in tags if tag.startswith("rel/")])
 
 def reltag():
