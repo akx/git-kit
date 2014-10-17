@@ -5,7 +5,7 @@ from .status import get_git_status
 
 def autofixup():
 	stati = get_git_status(["git", "status", "--porcelain"])
-	changed = stati["M "]
+	changed = stati["M "] or stati["MM"]
 	if not changed:
 		unstaged = stati[" M"]
 		if len(unstaged) > 1:
