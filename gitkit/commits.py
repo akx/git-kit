@@ -43,6 +43,11 @@ def autofixup():
 	else:
 		print "No fixup."
 
+def what():
+	description = get_output("git describe")
+	revision = get_output("git rev-parse HEAD")
+	print "%s (%s)" % (description, revision)
 
 def install(cli):
 	cli.command()(autofixup)
+	cli.command()(what)
