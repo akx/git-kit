@@ -15,10 +15,15 @@ def reltag():
 	""" Create an annotated release tag. """
 	now = datetime.datetime.now()
 	tags = reltag_list()
-	for rno in itertools.count():
-		tag = "rel/%s.%d" % (now.strftime("%Y-%m-%d"), rno)
-		if tag not in tags:
-			break
+	todays_prefix = "rel/%s." % now.strftime("%Y-%m-%d")
+	todays_tags = [tag for tag in tags if tag.startswith(todays_prefix)]
+	try:
+		highest_rel = max(int(tag.replace(todays_prefix, "")) for tag in todays_tags)
+	except ValueError:
+		highest_rel = -1
+
+	tag = "%s%d" % (todays_prefix, highest_rel + 1)
+
 	if yorn("Will create tag %s. Okay?" % tag):
 		run([
 			"git",
