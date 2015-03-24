@@ -1,4 +1,6 @@
-import click, importlib
+import click
+import importlib
+
 
 @click.group()
 def cli():

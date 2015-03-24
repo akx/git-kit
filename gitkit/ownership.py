@@ -9,7 +9,9 @@ from gitkit.util import get_lines
 
 INVALID_RE = re.compile("(jpg|jpeg|css|png|gif|dat|ds_store|ttf|woff|eot|svg|psd)$", re.I)
 
+
 class OwnershipMachine(object):
+
     def __init__(self):
         self.blob_blame_cache = {}
 
@@ -57,7 +59,6 @@ class OwnershipMachine(object):
                 lines_by_author[unicode(author)] += n_lines
         return lines_by_author
 
-
     def calculate(self, ref):
         commits = {}
         for line in get_lines(["git", "log", "--pretty=format:%at %H", ref]):
@@ -76,12 +77,14 @@ class OwnershipMachine(object):
             print >>sys.stderr, "Processing commit %d / %d..." % (i, len(commits))
             lines_by_author = self.process_commit(last_commit, commit)
             lines_by_author_per_day[date] = lines_by_author
-            print json.dumps({"date": date, "commit": str( commit), "owners": dict(lines_by_author), "total": sum(lines_by_author.values())})
+            print json.dumps({"date": date, "commit": str(commit), "owners": dict(lines_by_author), "total": sum(lines_by_author.values())})
             last_commit = commit
+
 
 def ownership(ref="master"):
     om = OwnershipMachine()
     om.calculate(ref)
+
 
 def install(cli):
     cli.command()(ownership)
