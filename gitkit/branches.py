@@ -38,8 +38,32 @@ def go_back():
                 run(["git", "checkout", prev_branch])
                 break
 
+def branches():
+    reflog_entries = list(
+        get_lines(
+            ["git", "log", "-g", "--pretty=format:%H:%ar:%gs", "--grep-reflog=moving from"]
+        )
+    )
+    branch_options = []
+
+    for reflog_entry in reflog_entries[:10]:
+        branch_match = re.search("from (.+?) to (.+?)$", reflog_entry)
+        prev_branch = branch_match.group(1)
+        if prev_branch not in branch_options:
+            branch_options.append(prev_branch)
+
+    for i, name in enumerate(branch_options, 1):
+        print "[%2d] %s" % (i, name)
+
+    branch_idx = int(raw_input("Checkout which branch? ")) - 1
+    if 0 <= branch_idx < len(branch_options):
+        branch_name = branch_options[branch_idx]
+        print "Checking out %s" % branch_name
+        run(["git", "checkout", branch_name])
+
 
 def install(cli):
     cli.command()(point_here)
     cli.command()(del_merged)
     cli.command()(go_back)
+    cli.command()(branches)
