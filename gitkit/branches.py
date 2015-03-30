@@ -45,11 +45,12 @@ def branches():
         )
     )
     branch_options = []
+    extant_branches = set(l.strip("* ") for l in get_lines(["git", "branch", "--column=plain"]))
 
-    for reflog_entry in reflog_entries[:10]:
+    for reflog_entry in reflog_entries[:100]:
         branch_match = re.search("from (.+?) to (.+?)$", reflog_entry)
         prev_branch = branch_match.group(1)
-        if prev_branch not in branch_options:
+        if prev_branch not in branch_options and prev_branch in extant_branches:
             branch_options.append(prev_branch)
 
     for i, name in enumerate(branch_options, 1):
