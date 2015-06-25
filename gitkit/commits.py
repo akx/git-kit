@@ -15,13 +15,13 @@ def autofixup():
         if len(unstaged) == 1:
             if yorn("There's one unstaged change (%s) -- would you like to add that and then see if we can autofixup?" % unstaged[0]):
                 print "Okay!"
-                run(["git", "add", unstaged[0]])
+                run(["git", "add", ":/" + unstaged[0]])
                 changed = unstaged
 
     if len(changed) > 1:
         croak("Not sure where to autofixup when more than one files have changed. :(")
 
-    logline = get_output(["git", "log", "-1", "--format=format:%H: %an, %ar -- %s", changed[0]]).strip()
+    logline = get_output(["git", "log", "-1", "--format=format:%H: %an, %ar -- %s", ":/" + changed[0]]).strip()
     if not logline:
         return croak("Could not find any commit that would have touched %s" % changed[0])
 
