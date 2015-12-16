@@ -6,7 +6,13 @@ import importlib
 def cli():
     pass
 
-for modname in ("gitkit.branches", "gitkit.tags", "gitkit.commits", "gitkit.ownership"):
+for modname in (
+    "gitkit.branches",
+    "gitkit.commits",
+    "gitkit.history",
+    "gitkit.ownership",
+    "gitkit.tags",
+):
     module = importlib.import_module(modname)
     getattr(module, "install")(cli)
 
