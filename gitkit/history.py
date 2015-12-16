@@ -29,7 +29,9 @@ def archaeology(ref1, range=None, w=False, diff_params=None):
 
     with click.progressbar(refs_in_range, item_show_func=show_best) as refs:
         for ref in refs:
-            diff = [l.split("\t") for l in get_lines("git diff-tree %s %s %s" % (diff_params, ref, ref1))]
+            diff = [l.split("\t") for l in get_lines(
+                "git -c core.safecrlf=off diff-tree %s %s %s" % (diff_params, ref, ref1)
+            )]
             delta_lines = sum(int(l[0]) + int(l[1]) for l in diff if not (l[0] == "-" or l[1] == "-"))
             scores[ref] = delta_lines
             if not best_ref or delta_lines < best_score:
