@@ -2,12 +2,14 @@ import subprocess
 import sys
 
 
+REQUIRES_SHELL = (sys.platform != "win32")
+
 def run(command):
     subprocess.check_call(command)
 
 
 def get_output(command, ignore_errors=False, strip_left=True, strip_right=True):
-    pipe = subprocess.Popen(command, stdout=subprocess.PIPE)
+    pipe = subprocess.Popen(command, stdout=subprocess.PIPE, shell=REQUIRES_SHELL)
     output = pipe.communicate()[0]
     if strip_left:
         output = output.lstrip()

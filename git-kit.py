@@ -1,0 +1,2 @@
+import gitkit
+gitkit.cli()
