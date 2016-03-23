@@ -3,13 +3,26 @@ import sys
 
 import click
 
+try:
+    from shlex import quote
+except ImportError:
+    from pipes import quote
+
 REQUIRES_SHELL = (sys.platform != "win32")
 
+
+def mangle_command(command):
+    if REQUIRES_SHELL and isinstance(command, (tuple, list)):
+            command = " ".join(quote(part) for part in command)
+    return command
+
+
 def run(command):
-    subprocess.check_call(command)
+    subprocess.check_call(mangle_command(command))
 
 
 def get_output(command, ignore_errors=False, strip_left=True, strip_right=True):
+    command = mangle_command(command)
     pipe = subprocess.Popen(command, stdout=subprocess.PIPE, shell=REQUIRES_SHELL)
     output = pipe.communicate()[0]
     if strip_left:
