@@ -1,6 +1,7 @@
 import subprocess
 import sys
 
+import click
 
 REQUIRES_SHELL = (sys.platform != "win32")
 
@@ -37,7 +38,7 @@ def get_lines(command, ignore_errors=False, strip_left=True, strip_right=True):
 
 
 def yorn(prompt):
-    return raw_input(prompt + " (y/N) > ").lower().startswith("y")
+    return click.confirm(prompt)
 
 
 def croak(message):
