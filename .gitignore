@@ -1,3 +1,4 @@
 *.exe
 *.pyc
 .idea
+*.egg-info

@@ -41,6 +41,7 @@ def go_back():
                 run(["git", "checkout", prev_branch])
                 break
 
+
 def branches():
     reflog_entries = list(
         get_lines(

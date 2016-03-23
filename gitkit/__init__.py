@@ -1,5 +1,8 @@
-import click
 import importlib
+
+import click
+
+__version__ = "0.0.1"
 
 
 @click.group()
