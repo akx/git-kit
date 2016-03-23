@@ -1,19 +1,21 @@
-import click
 import re
-from .util import get_output, get_lines, run, yorn
+
+import click
+
 from .conf import sacred_branches
+from .util import get_lines, get_output, run, yorn
 
 
 @click.argument('branches', nargs=-1)
 def point_here(branches):
     """ Set the given branch refs to point to the current HEAD. """
     if not branches:
-        print "No branches passed."
+        print("No branches passed.")
         return
     current = get_output("git rev-parse HEAD")
     for branch in branches:
         run(["git", "update-ref", "refs/heads/%s" % branch, current])
-        print branch, "set to", current
+        print(branch, "set to", current)
 
 
 @click.argument('ref', required=False, default="master")
@@ -27,7 +29,8 @@ def del_merged(ref):
 def go_back():
     current_branch = get_output("git rev-parse --abbrev-ref HEAD").strip()
     reflog_entries = get_lines(
-        ["git", "log", "-g", "--pretty=format:%H:%ar:%gs", "--grep-reflog=moving from .* to %s" % current_branch])
+        ["git", "log", "-g", "--pretty=format:%H:%ar:%gs", "--grep-reflog=moving from .* to %s" % current_branch]
+    )
     for reflog_entry in reflog_entries:
         branch_match = re.search("from (.+?) to (.+?)$", reflog_entry)
         prev_branch = branch_match.group(1)
@@ -54,12 +57,12 @@ def branches():
             branch_options.append(prev_branch)
 
     for i, name in enumerate(branch_options, 1):
-        print "[%2d] %s" % (i, name)
+        print("[%2d] %s" % (i, name))
 
-    branch_idx = int(raw_input("Checkout which branch? ")) - 1
+    branch_idx = int(input("Checkout which branch? ")) - 1
     if 0 <= branch_idx < len(branch_options):
         branch_name = branch_options[branch_idx]
-        print "Checking out %s" % branch_name
+        print("Checking out %s" % branch_name)
         run(["git", "checkout", branch_name])
 
 

@@ -1,7 +1,6 @@
-import click
 import datetime
-import itertools
-from .util import run, yorn, get_lines
+
+from .util import get_lines, run, yorn
 
 
 def reltag_list():
@@ -35,9 +34,9 @@ def reltag():
             datetime.datetime.now().isoformat(),
             tag
             ])
-        print "Tag created."
+        print("Tag created.")
     else:
-        print "No tag was created."
+        print("No tag was created.")
 
 
 def install(cli):

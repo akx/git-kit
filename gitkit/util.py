@@ -17,7 +17,11 @@ def get_output(command, ignore_errors=False, strip_left=True, strip_right=True):
         output = output.rstrip()
     if not ignore_errors:
         if pipe.returncode != 0:
-            raise subprocess.CalledProcessError(pipe.returncode, command)
+            raise subprocess.CalledProcessError(pipe.returncode, pipe.args)
+    try:
+        output = output.decode("UTF-8")
+    except UnicodeError:
+        pass
     return output
 
 
@@ -37,5 +41,5 @@ def yorn(prompt):
 
 
 def croak(message):
-    print message
+    print(message)
     sys.exit(1)

@@ -2,7 +2,7 @@ from subprocess import CalledProcessError
 
 import click
 
-from .util import get_output, get_lines
+from .util import get_lines, get_output
 
 
 @click.argument('ref1')
@@ -35,7 +35,7 @@ def archaeology(ref1, range=None, w=False, diff_params=None):
                 diff = [l.split("\t") for l in get_lines(
                     "git -c core.safecrlf=off diff-tree %s %s %s" % (ref, ref1, diff_params)
                 )]
-            except CalledProcessError as cpe:
+            except CalledProcessError:
                 continue
             delta_lines = sum(int(l[0]) + int(l[1]) for l in diff if not (l[0] == "-" or l[1] == "-"))
             scores[ref] = delta_lines
@@ -43,8 +43,8 @@ def archaeology(ref1, range=None, w=False, diff_params=None):
                 best_ref = ref
                 best_score = delta_lines
     print("Best results:")
-    for ref, score in sorted(scores.items(), key=lambda pair: pair[1])[:10]:
-        print("%32s\t%5d\t%s" % (ref, score, get_output("git describe --all --always %s" % ref)))
+    for ref, score in sorted(list(scores.items()), key=lambda pair: pair[1])[:10]:
+        print(("%32s\t%5d\t%s" % (ref, score, get_output("git describe --all --always %s" % ref))))
 
 
 def install(cli):
