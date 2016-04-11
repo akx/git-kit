@@ -18,7 +18,7 @@ def mangle_command(command):
 
 
 def run(command):
-    subprocess.check_call(mangle_command(command))
+    subprocess.check_call(mangle_command(command), shell=REQUIRES_SHELL)
 
 
 def get_output(command, ignore_errors=False, strip_left=True, strip_right=True):
