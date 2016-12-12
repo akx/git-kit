@@ -1,3 +1,2 @@
-import gitkit
-
-gitkit.cli()
+from gitkit.cli import cli
+cli()

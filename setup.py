@@ -6,7 +6,7 @@ from gitkit import __version__
 setup(
     name="git-kit",
     version=__version__,
-    entry_points={"console_scripts": ["git-kit=gitkit:cli"]},
+    entry_points={"console_scripts": ["git-kit=gitkit.cli:cli"]},
     description="A toolkit for Git",
     author="Aarni Koskela",
     author_email="akx@iki.fi",
