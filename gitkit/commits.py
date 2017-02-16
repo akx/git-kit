@@ -1,7 +1,10 @@
+import click
+
 from .status import get_git_status
 from .util import croak, get_output, run, yorn
 
 
+@click.command()
 def autofixup():
     stati = get_git_status(["git", "status", "--porcelain"])
     changed = _autofixup_get_changed_files(stati)
@@ -50,12 +53,8 @@ def _autofixup_get_changed_files(stati):
     return changed
 
 
+@click.command()
 def what():
     description = get_output("git describe")
     revision = get_output("git rev-parse HEAD")
     print(("%s (%s)" % (description, revision)))
-
-
-def install(cli):
-    cli.command()(autofixup)
-    cli.command()(what)

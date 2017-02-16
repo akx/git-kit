@@ -5,6 +5,7 @@ import click
 from .util import get_lines, get_output
 
 
+@click.command()
 @click.argument('ref1')
 @click.argument('range', required=False)
 @click.option('-w', is_flag=True, default=False)
@@ -45,7 +46,3 @@ def archaeology(ref1, range=None, w=False, diff_params=None):
     print("Best results:")
     for ref, score in sorted(list(scores.items()), key=lambda pair: pair[1])[:10]:
         print(("%32s\t%5d\t%s" % (ref, score, get_output("git describe --all --always %s" % ref))))
-
-
-def install(cli):
-    cli.command()(archaeology)

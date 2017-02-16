@@ -1,5 +1,7 @@
 import datetime
 
+import click
+
 from .util import get_lines, run, yorn
 
 
@@ -12,6 +14,7 @@ def reltag_list():
     return sorted([tag for tag in tags if tag.startswith("rel/")])
 
 
+@click.command()
 def reltag():
     """ Create an annotated release tag. """
     now = datetime.datetime.now()
@@ -37,7 +40,3 @@ def reltag():
         print("Tag created.")
     else:
         print("No tag was created.")
-
-
-def install(cli):
-    cli.command()(reltag)

@@ -5,6 +5,8 @@ import sys
 import time
 from collections import Counter
 
+import click
+
 from gitkit.util import get_lines
 
 INVALID_RE = re.compile("(jpg|jpeg|css|png|gif|dat|ds_store|ttf|woff|eot|svg|psd)$", re.I)
@@ -91,10 +93,7 @@ class OwnershipMachine(object):
             last_commit = commit
 
 
+@click.command()
 def ownership(ref="master"):
     om = OwnershipMachine()
     om.calculate(ref)
-
-
-def install(cli):
-    cli.command()(ownership)

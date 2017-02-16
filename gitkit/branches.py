@@ -6,6 +6,7 @@ from .conf import sacred_branches
 from .util import get_lines, get_output, run, yorn
 
 
+@click.command()
 @click.argument('branches', nargs=-1)
 def point_here(branches):
     """ Set the given branch refs to point to the current HEAD. """
@@ -18,6 +19,7 @@ def point_here(branches):
         print(branch, "set to", current)
 
 
+@click.command()
 @click.argument('ref', required=False, default="master")
 def del_merged(ref):
     for branch in set(get_lines(["git", "branch", "-l", "--merged", ref])):
@@ -26,6 +28,7 @@ def del_merged(ref):
             run(["git", "branch", "-v", "-d", branch])
 
 
+@click.command()
 def go_back():
     current_branch = get_output("git rev-parse --abbrev-ref HEAD").strip()
     reflog_entries = get_lines(
@@ -42,6 +45,7 @@ def go_back():
                 break
 
 
+@click.command()
 def branches():
     reflog_entries = list(
         get_lines(
@@ -65,10 +69,3 @@ def branches():
         branch_name = branch_options[branch_idx]
         print("Checking out %s" % branch_name)
         run(["git", "checkout", branch_name])
-
-
-def install(cli):
-    cli.command()(point_here)
-    cli.command()(del_merged)
-    cli.command()(go_back)
-    cli.command()(branches)
