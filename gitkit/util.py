@@ -33,7 +33,7 @@ def get_output(command, ignore_errors=False, strip_left=True, strip_right=True):
         if pipe.returncode != 0:
             raise subprocess.CalledProcessError(pipe.returncode, pipe.args)
     try:
-        output = output.decode("UTF-8")
+        output = output.decode("UTF-8", "replace")
     except UnicodeError:
         pass
     return output
