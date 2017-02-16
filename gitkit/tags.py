@@ -33,7 +33,7 @@ def reltag():
             "-m",
             datetime.datetime.now().isoformat(),
             tag
-            ])
+        ])
         print("Tag created.")
     else:
         print("No tag was created.")

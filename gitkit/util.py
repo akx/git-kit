@@ -13,7 +13,7 @@ REQUIRES_SHELL = (sys.platform != "win32")
 
 def mangle_command(command):
     if REQUIRES_SHELL and isinstance(command, (tuple, list)):
-            command = " ".join(quote(part) for part in command)
+        command = " ".join(quote(part) for part in command)
     return command
 
 
