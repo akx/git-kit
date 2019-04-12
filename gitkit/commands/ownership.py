@@ -10,26 +10,25 @@ import click
 from gitkit.util.shell import get_output, get_lines
 
 INVALID_EXTENSIONS = {
-    'css',
-    'dat',
-    'ds_store',
-    'eot',
-    'gif',
-    'jpeg',
-    'png',
-    'psd',
-    'svg',
-    'ttf',
-    'woff',
-    'jpg',
-    'deb',
+    "css",
+    "dat",
+    "ds_store",
+    "eot",
+    "gif",
+    "jpeg",
+    "png",
+    "psd",
+    "svg",
+    "ttf",
+    "woff",
+    "jpg",
+    "deb",
 }
 
-INVALID_RE = re.compile("(%s)$" % '|'.join(INVALID_EXTENSIONS), re.I)
+INVALID_RE = re.compile("(%s)$" % "|".join(INVALID_EXTENSIONS), re.I)
 
 
 class OwnershipMachine(object):
-
     def __init__(self):
         self.blob_blame_cache = {}
 
@@ -69,10 +68,9 @@ class OwnershipMachine(object):
 
         blob_blames = {}
         path_sha_iter = click.progressbar(
-            list(paths.items()),
-            item_show_func=lambda i: (i[0] if i else None),
+            list(paths.items()), item_show_func=lambda i: (i[0] if i else None)
         )
-        path_sha_iter.is_hidden = (not progress)
+        path_sha_iter.is_hidden = not progress
         with path_sha_iter:
             for path, sha in path_sha_iter:
                 blob_blame = self.blob_blame_cache.get(sha)
@@ -104,14 +102,14 @@ class OwnershipMachine(object):
                 "date": date,
                 "commit": str(commit),
                 "owners": dict(lines_by_author),
-                "total": sum(lines_by_author.values())
+                "total": sum(lines_by_author.values()),
             }
             yield day_datum
 
 
 @click.command()
-@click.option('--step', type=int, default=5, )
-@click.option('--over-time/--no-over-time', default=False)
+@click.option("--step", type=int, default=5)
+@click.option("--over-time/--no-over-time", default=False)
 def ownership(ref="master", step=5, over_time=False):
     """
     Figure out total authorship, line-by-line, of the repository.
@@ -121,10 +119,14 @@ def ownership(ref="master", step=5, over_time=False):
         for datum in om.calculate_over_time(ref, step=step):
             print(json.dumps(datum))
     else:
-        commit = get_output('git rev-parse %s' % ref)
-        print('Processing commit %s...' % commit, file=sys.stderr)
+        commit = get_output("git rev-parse %s" % ref)
+        print("Processing commit %s..." % commit, file=sys.stderr)
         lines_by_author = om.process_commit(commit, progress=True)
-        print(json.dumps({
-            "owners": dict(lines_by_author),
-            "total": sum(lines_by_author.values()),
-        }))
+        print(
+            json.dumps(
+                {
+                    "owners": dict(lines_by_author),
+                    "total": sum(lines_by_author.values()),
+                }
+            )
+        )

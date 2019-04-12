@@ -5,7 +5,7 @@ from gitkit.util.shell import get_lines, run
 
 
 @click.command()
-@click.argument('ref', required=False, default="master")
+@click.argument("ref", required=False, default="master")
 def del_merged(ref):
     """
     Delete merged branches.

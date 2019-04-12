@@ -12,11 +12,19 @@ def branches():
     """
     reflog_entries = list(
         get_lines(
-            ["git", "log", "-g", "--pretty=format:%H:%ar:%gs", "--grep-reflog=moving from"]
+            [
+                "git",
+                "log",
+                "-g",
+                "--pretty=format:%H:%ar:%gs",
+                "--grep-reflog=moving from",
+            ]
         )
     )
     branch_options = []
-    extant_branches = set(l.strip("* ") for l in get_lines(["git", "branch", "--column=plain"]))
+    extant_branches = set(
+        l.strip("* ") for l in get_lines(["git", "branch", "--column=plain"])
+    )
 
     for reflog_entry in reflog_entries[:100]:
         branch_match = re.search("from (.+?) to (.+?)$", reflog_entry)

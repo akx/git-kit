@@ -4,7 +4,7 @@ from gitkit.util.shell import get_output, run
 
 
 @click.command()
-@click.argument('branches', nargs=-1)
+@click.argument("branches", nargs=-1)
 def point_here(branches):
     """ Set the given branch refs to point to the current HEAD. """
     if not branches:

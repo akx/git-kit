@@ -13,7 +13,13 @@ def go_back():
     """
     current_branch = get_output("git rev-parse --abbrev-ref HEAD").strip()
     reflog_entries = get_lines(
-        ["git", "log", "-g", "--pretty=format:%H:%ar:%gs", "--grep-reflog=moving from .* to %s" % current_branch]
+        [
+            "git",
+            "log",
+            "-g",
+            "--pretty=format:%H:%ar:%gs",
+            "--grep-reflog=moving from .* to %s" % current_branch,
+        ]
     )
     for reflog_entry in reflog_entries:
         branch_match = re.search("from (.+?) to (.+?)$", reflog_entry)

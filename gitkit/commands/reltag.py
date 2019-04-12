@@ -7,11 +7,7 @@ from gitkit.util.shell import run, get_lines
 
 
 def reltag_list():
-    tags = get_lines([
-        "git",
-        "tag",
-        "-l",
-    ])
+    tags = get_lines(["git", "tag", "-l"])
     return sorted([tag for tag in tags if tag.startswith("rel/")])
 
 
@@ -30,14 +26,7 @@ def reltag():
     tag = "%s%d" % (todays_prefix, highest_rel + 1)
 
     if yorn("Will create tag %s. Okay?" % tag):
-        run([
-            "git",
-            "tag",
-            "-a",
-            "-m",
-            datetime.datetime.now().isoformat(),
-            tag
-        ])
+        run(["git", "tag", "-a", "-m", datetime.datetime.now().isoformat(), tag])
         print("Tag created.")
     else:
         print("No tag was created.")
