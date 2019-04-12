@@ -2,8 +2,9 @@ import re
 
 import click
 
-from .conf import sacred_branches
-from .util import get_lines, get_output, run, yorn
+from gitkit.conf import sacred_branches
+from gitkit.util.cli import yorn
+from gitkit.util.shell import run, get_output, get_lines
 
 
 @click.command()

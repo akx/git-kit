@@ -1,12 +1,6 @@
 import subprocess
 import sys
-
-import click
-
-try:
-    from shlex import quote
-except ImportError:
-    from pipes import quote
+from shlex import quote
 
 REQUIRES_SHELL = (sys.platform != "win32")
 
@@ -48,12 +42,3 @@ def get_lines(command, ignore_errors=False, strip_left=True, strip_right=True):
 
         if line:
             yield line
-
-
-def yorn(prompt):
-    return click.confirm(prompt)
-
-
-def croak(message):
-    print(message)
-    sys.exit(1)

@@ -2,7 +2,7 @@ from subprocess import CalledProcessError
 
 import click
 
-from .util import get_lines, get_output
+from gitkit.util.shell import get_output, get_lines
 
 
 @click.command()

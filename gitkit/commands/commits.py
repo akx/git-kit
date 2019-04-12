@@ -1,7 +1,8 @@
 import click
 
-from .status import get_git_status
-from .util import croak, get_output, run, yorn
+from gitkit.util.status import get_git_status
+from gitkit.util.cli import yorn, croak
+from gitkit.util.shell import run, get_output
 
 
 @click.command()

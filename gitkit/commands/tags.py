@@ -2,7 +2,8 @@ import datetime
 
 import click
 
-from .util import get_lines, run, yorn
+from gitkit.util.cli import yorn
+from gitkit.util.shell import run, get_lines
 
 
 def reltag_list():

@@ -7,7 +7,7 @@ from collections import Counter
 
 import click
 
-from gitkit.util import get_lines, get_output
+from gitkit.util.shell import get_output, get_lines
 
 INVALID_EXTENSIONS = {
     'css',

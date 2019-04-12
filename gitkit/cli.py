@@ -3,7 +3,6 @@ import os
 import pkgutil
 
 import click
-from click import Command
 
 
 @click.group()
@@ -12,14 +11,12 @@ def cli():
 
 
 def initialize():
-    dir = os.path.dirname(__file__)
-    for _, name, _ in pkgutil.iter_modules([dir]):
-        if name in ('cli', 'conf', 'util'):
-            continue
-        module = importlib.import_module('gitkit.%s' % name)
+    commands_dir = os.path.join(os.path.dirname(__file__), 'commands')
+    for _, name, _ in pkgutil.iter_modules([commands_dir]):
+        module = importlib.import_module('gitkit.commands.%s' % name)
         for name, value in vars(module).items():
             try:
-                if isinstance(value, Command):
+                if isinstance(value, click.Command):
                     cli.add_command(value)
             except TypeError:
                 pass

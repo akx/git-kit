@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-from .util import get_lines
+from gitkit.util.shell import get_lines
 
 
 def parse_git_status_lines(status_lines):
