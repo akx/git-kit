@@ -113,6 +113,9 @@ class OwnershipMachine(object):
 @click.option('--step', type=int, default=5, )
 @click.option('--over-time/--no-over-time', default=False)
 def ownership(ref="master", step=5, over_time=False):
+    """
+    Figure out total authorship, line-by-line, of the repository.
+    """
     om = OwnershipMachine()
     if over_time:
         for datum in om.calculate_over_time(ref, step=step):

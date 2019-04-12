@@ -17,7 +17,7 @@ def reltag_list():
 
 @click.command()
 def reltag():
-    """ Create an annotated release tag. """
+    """ Create an annotated timestamped release tag. """
     now = datetime.datetime.now()
     tags = reltag_list()
     todays_prefix = "rel/%s." % now.strftime("%Y-%m-%d")

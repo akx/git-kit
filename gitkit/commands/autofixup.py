@@ -1,12 +1,15 @@
 import click
 
+from gitkit.util.cli import croak, yorn
+from gitkit.util.shell import get_output, run
 from gitkit.util.status import get_git_status
-from gitkit.util.cli import yorn, croak
-from gitkit.util.shell import run, get_output
 
 
 @click.command()
 def autofixup():
+    """
+    Attempt to figure out a commit to fix up a single changed file into.
+    """
     stati = get_git_status(["git", "status", "--porcelain"])
     changed = _autofixup_get_changed_files(stati)
     if len(changed) > 1:
@@ -52,10 +55,3 @@ def _autofixup_get_changed_files(stati):
                 run(["git", "add", ":/" + unstaged[0]])
                 changed = unstaged
     return changed
-
-
-@click.command()
-def what():
-    description = get_output("git describe")
-    revision = get_output("git rev-parse HEAD")
-    print(("%s (%s)" % (description, revision)))

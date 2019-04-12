@@ -8,9 +8,12 @@ from gitkit.util.shell import get_output, get_lines
 @click.command()
 @click.argument('ref1')
 @click.argument('range', required=False)
-@click.option('-w', is_flag=True, default=False)
+@click.option('-w', is_flag=True, default=False, help='ignore whitespace?')
 @click.option('--diff-params', default="")
 def archaeology(ref1, range=None, w=False, diff_params=None):
+    """
+    Find a commit most closely resembling a ref.
+    """
     ref1 = get_output("git rev-parse %s" % ref1)
     if range:
         refs_in_range = list(get_lines("git log --pretty=%%H %s" % range))
