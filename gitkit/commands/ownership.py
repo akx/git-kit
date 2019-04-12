@@ -25,7 +25,7 @@ INVALID_EXTENSIONS = {
     "deb",
 }
 
-INVALID_RE = re.compile("(%s)$" % "|".join(INVALID_EXTENSIONS), re.I)
+INVALID_RE = re.compile(f"({'|'.join(INVALID_EXTENSIONS)})$", re.I)
 
 
 class OwnershipMachine(object):
@@ -64,7 +64,7 @@ class OwnershipMachine(object):
                     if self.is_ownable_type(path):
                         paths[path] = sha
 
-        print("%s: %s files" % (commit, len(paths)), file=sys.stderr)
+        print(f"{commit}: {len(paths)} files", file=sys.stderr)
 
         blob_blames = {}
         path_sha_iter = click.progressbar(
@@ -96,7 +96,7 @@ class OwnershipMachine(object):
         for i, (date, commit) in enumerate(sorted(commits.items())):
             if i % step:
                 continue
-            print("Processing commit %d / %d..." % (i, len(commits)), file=sys.stderr)
+            print(f"Processing commit {i} / {len(commits)}...", file=sys.stderr)
             lines_by_author = self.process_commit(commit)
             day_datum = {
                 "date": date,
@@ -119,8 +119,8 @@ def ownership(ref="master", step=5, over_time=False):
         for datum in om.calculate_over_time(ref, step=step):
             print(json.dumps(datum))
     else:
-        commit = get_output("git rev-parse %s" % ref)
-        print("Processing commit %s..." % commit, file=sys.stderr)
+        commit = get_output(f"git rev-parse {ref}")
+        print(f"Processing commit {commit}...", file=sys.stderr)
         lines_by_author = om.process_commit(commit, progress=True)
         print(
             json.dumps(

@@ -19,9 +19,7 @@ def autofixup():
         ["git", "log", "-1", "--format=format:%H: %an, %ar -- %s", ":/" + changed[0]]
     ).strip()
     if not logline:
-        return croak(
-            "Could not find any commit that would have touched %s" % changed[0]
-        )
+        return croak(f"Could not find any commit that would have touched {changed[0]}")
 
     commit = logline.split(":")[0]
 
@@ -29,14 +27,13 @@ def autofixup():
 
     if commit == current_parent:
         if yorn(
-            "Fixup onto %s? -- looks like it's HEAD, so we can just commit --amend. That okay?"
-            % logline
+            f"Fixup onto {logline}? -- looks like it's HEAD, so we can just commit --amend. That okay?"
         ):
             run(["git", "commit", "--amend", "--no-edit"])
             return print("Amend done.")
         print("Okay, well, we can also fixup...")
 
-    if yorn("Fixup onto %s?" % logline):
+    if yorn(f"Fixup onto {logline}?"):
         run(["git", "commit", "--fixup", commit])
         return print("Fixup done. Remember to `git rebase -i master` or whatever! :)")
     print("No fixup.")
@@ -55,9 +52,8 @@ def _autofixup_get_changed_files(stati):
             croak("Doesn't look like you have any changes autofixup can deal with.")
         if len(unstaged) == 1:
             if yorn(
-                "There's one unstaged change (%s) -- "
-                "would you like to add that and then see if we can autofixup?"
-                % unstaged[0]
+                f"There's one unstaged change ({unstaged[0]}) -- "
+                f"would you like to add that and then see if we can autofixup?"
             ):
                 print("Okay!")
                 run(["git", "add", ":/" + unstaged[0]])

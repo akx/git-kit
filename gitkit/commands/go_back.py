@@ -18,7 +18,7 @@ def go_back():
             "log",
             "-g",
             "--pretty=format:%H:%ar:%gs",
-            "--grep-reflog=moving from .* to %s" % current_branch,
+            f"--grep-reflog=moving from .* to {current_branch}",
         ]
     )
     for reflog_entry in reflog_entries:
@@ -27,6 +27,6 @@ def go_back():
         new_branch = branch_match.group(2)
 
         if prev_branch != new_branch:
-            if yorn("Checkout %s?" % prev_branch):
+            if yorn(f"Checkout {prev_branch}?"):
                 run(["git", "checkout", prev_branch])
                 break

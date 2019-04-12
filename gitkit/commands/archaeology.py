@@ -14,16 +14,16 @@ def archaeology(ref1, range=None, w=False, diff_params=None):
     """
     Find a commit most closely resembling a ref.
     """
-    ref1 = get_output("git rev-parse %s" % ref1)
+    ref1 = get_output(f"git rev-parse {ref1}")
     if range:
-        refs_in_range = list(get_lines("git log --pretty=%%H %s" % range))
+        refs_in_range = list(get_lines(f"git log --pretty=%%H {range}"))
     else:
         refs_in_range = list(get_lines("git log --pretty=%H --all"))
 
     if ref1 in refs_in_range:
         refs_in_range.remove(ref1)
 
-    diff_params = ("--numstat %s %s" % (diff_params or "", "-w" if w else "")).strip()
+    diff_params = (f"--numstat {diff_params or ''} {'-w' if w else ''}").strip()
 
     best_ref = None
     best_score = 0
@@ -31,7 +31,7 @@ def archaeology(ref1, range=None, w=False, diff_params=None):
 
     def show_best(x):
         if best_ref:
-            return "Best found: %s (%d)" % (best_ref[:8], best_score)
+            return f"Best found: {best_ref[:8]} ({best_score:d})"
 
     with click.progressbar(refs_in_range, item_show_func=show_best) as refs:
         for ref in refs:
@@ -39,8 +39,7 @@ def archaeology(ref1, range=None, w=False, diff_params=None):
                 diff = [
                     l.split("\t")
                     for l in get_lines(
-                        "git -c core.safecrlf=off diff-tree %s %s %s"
-                        % (ref, ref1, diff_params)
+                        f"git -c core.safecrlf=off diff-tree {ref} {ref1} {diff_params}"
                     )
                 ]
             except CalledProcessError:
@@ -54,9 +53,5 @@ def archaeology(ref1, range=None, w=False, diff_params=None):
                 best_score = delta_lines
     print("Best results:")
     for ref, score in sorted(list(scores.items()), key=lambda pair: pair[1])[:10]:
-        print(
-            (
-                "%32s\t%5d\t%s"
-                % (ref, score, get_output("git describe --all --always %s" % ref))
-            )
-        )
+        description = get_output(f"git describe --all --always {ref}")
+        print(f"{ref:>32}\t{score:5d}\t{description}")

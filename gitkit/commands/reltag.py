@@ -16,16 +16,16 @@ def reltag():
     """ Create an annotated timestamped release tag. """
     now = datetime.datetime.now()
     tags = reltag_list()
-    todays_prefix = "rel/%s." % now.strftime("%Y-%m-%d")
+    todays_prefix = f"rel/{now.strftime('%Y-%m-%d')}."
     todays_tags = [tag for tag in tags if tag.startswith(todays_prefix)]
     try:
         highest_rel = max(int(tag.replace(todays_prefix, "")) for tag in todays_tags)
     except ValueError:
         highest_rel = -1
 
-    tag = "%s%d" % (todays_prefix, highest_rel + 1)
+    tag = f"{todays_prefix}{highest_rel + 1}"
 
-    if yorn("Will create tag %s. Okay?" % tag):
+    if yorn(f"Will create tag {tag}. Okay?"):
         run(["git", "tag", "-a", "-m", datetime.datetime.now().isoformat(), tag])
         print("Tag created.")
     else:

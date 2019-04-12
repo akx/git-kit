@@ -33,10 +33,10 @@ def branches():
             branch_options.append(prev_branch)
 
     for i, name in enumerate(branch_options, 1):
-        print("[%2d] %s" % (i, name))
+        print(f"[{i:2d}] {name}")
 
     branch_idx = int(input("Checkout which branch? ")) - 1
     if 0 <= branch_idx < len(branch_options):
         branch_name = branch_options[branch_idx]
-        print("Checking out %s" % branch_name)
+        print(f"Checking out {branch_name}")
         run(["git", "checkout", branch_name])

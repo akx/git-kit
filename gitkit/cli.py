@@ -13,7 +13,7 @@ def cli():
 def initialize():
     commands_dir = os.path.join(os.path.dirname(__file__), "commands")
     for _, name, _ in pkgutil.iter_modules([commands_dir]):
-        module = importlib.import_module("gitkit.commands.%s" % name)
+        module = importlib.import_module(f"gitkit.commands.{name}")
         for name, value in vars(module).items():
             try:
                 if isinstance(value, click.Command):

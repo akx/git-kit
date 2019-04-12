@@ -12,5 +12,5 @@ def point_here(branches):
         return
     current = get_output("git rev-parse HEAD")
     for branch in branches:
-        run(["git", "update-ref", "refs/heads/%s" % branch, current])
+        run(["git", "update-ref", f"refs/heads/{branch}", current])
         print(branch, "set to", current)

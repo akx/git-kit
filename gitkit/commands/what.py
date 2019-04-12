@@ -10,4 +10,4 @@ def what():
     """
     description = get_output("git describe")
     revision = get_output("git rev-parse HEAD")
-    print(("%s (%s)" % (description, revision)))
+    print(f"{description} ({revision})")

@@ -12,22 +12,22 @@ def vtag(version):
     """ Create a version commit and release tag. """
     grep_output = list(get_lines(["git", "grep", version], ignore_errors=True))
     if not grep_output:
-        croak("The string %r does not appear in the current code. It should!" % version)
+        croak(f"The string {version!r} does not appear in the current code. It should!")
 
     last_commits = get_lines(["git", "log", "--oneline", "-n 10"])
     if not any(version in line for line in last_commits):
         print(
-            "None of the last 10 commits contain %r in their commit message." % version
+            f"None of the last 10 commits contain {version!r} in their commit message."
         )
-        commit_message = "Become %s" % version
-        if yorn("Create a %r commit?" % commit_message):
+        commit_message = f"Become {version}"
+        if yorn(f"Create a {commit_message!r} commit?"):
             run(["git", "commit", "-m", commit_message])
 
-    tag_name = "v%s" % version
-    tag_message = "Version %s" % version
+    tag_name = f"v{version}"
+    tag_message = f"Version {version}"
 
-    if yorn("Will create tag %r with message %r. Okay?" % (tag_name, tag_message)):
+    if yorn(f"Will create tag {tag_name!r} with message {tag_message!r}. Okay?"):
         run(["git", "tag", "-a", "-m", tag_message, tag_name])
-        print("Tag %s created." % tag_message)
+        print(f"Tag {tag_message} created.")
     else:
         print("No tag was created.")
