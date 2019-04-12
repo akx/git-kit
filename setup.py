@@ -12,8 +12,7 @@ setup(
     author_email="akx@iki.fi",
     license="MIT",
     install_requires=[
-        "click==6.3",
-        "six==1.10.0"
+        "click>=6.0"
     ],
     packages=["gitkit"],
 )

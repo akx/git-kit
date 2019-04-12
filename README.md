@@ -4,7 +4,7 @@ Useful utilities for Git
 
 ## Installation
 
-* Create a virtualenv
+* Create a Python 3 virtualenv
 * Activate the virtualenv
 * Clone the repo
 * `pip install -e .`
