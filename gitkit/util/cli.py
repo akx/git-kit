@@ -3,8 +3,8 @@ import sys
 import click
 
 
-def yorn(prompt):
-    return click.confirm(prompt)
+def yorn(prompt, default=False):
+    return click.confirm(prompt, default=default)
 
 
 def croak(message):
