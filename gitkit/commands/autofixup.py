@@ -29,7 +29,7 @@ def autofixup():
     filename = changed[0]
 
     afis = [
-        AutofixupCommitInfo(*log_line.split(";"))
+        AutofixupCommitInfo(*log_line.split(";", 3))
         for log_line in get_lines(
             [
                 "git",
