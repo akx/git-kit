@@ -2,6 +2,7 @@ import click
 from collections import namedtuple
 
 from gitkit.util.cli import croak, yorn
+from gitkit.util.refs import get_main_branch
 from gitkit.util.shell import get_output, run, get_lines
 from gitkit.util.status import get_git_status
 
@@ -66,7 +67,10 @@ def autofixup():
 
     if yorn(f"Fixup onto {click.style(str(afi), bold=True)}?", default=True):
         run(["git", "commit", "--fixup", afi.commit])
-        return print("Fixup done. Remember to `git rebase -i master` or whatever! :)")
+        main_branch = get_main_branch()
+        return print(
+            f"Fixup done. Remember to `git rebase -i {main_branch}` or whatever! :)"
+        )
     print("No fixup.")
 
 
