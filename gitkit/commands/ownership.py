@@ -4,6 +4,7 @@ import re
 import sys
 import time
 from collections import Counter
+from multiprocessing.pool import ThreadPool
 
 import click
 
@@ -28,61 +29,79 @@ INVALID_EXTENSIONS = {
 INVALID_RE = re.compile(f"({'|'.join(INVALID_EXTENSIONS)})$", re.I)
 
 
+def count_lines_by_author(blob_blames):
+    lines_by_author = Counter()
+    for blob_blame in list(blob_blames.values()):
+        for author, n_lines in blob_blame.items():
+            lines_by_author[str(author)] += n_lines
+    return lines_by_author
+
+
+def is_ownable_type(path):
+    path = str(path).lower()
+    if INVALID_RE.search(path):
+        return False
+    if "/migrations/" in path:
+        return False
+    if "vendor/" in path:
+        return False
+    return True
+
+
+def get_path_to_sha_map(commit):
+    paths = {}
+    for line in get_lines(["git", "ls-tree", "-r", commit]):
+        line = line.strip()
+        if line:
+            line = line.split(None, 3)
+            mode, kind, sha, path = line
+            if kind == "blob":
+                if is_ownable_type(path):
+                    paths[path] = sha
+    return paths
+
+
+def blame_lines(commit, path):
+    lines_by_author = Counter()
+    for line in get_lines(
+        ["git", "blame", "-w", "-M", "-C", "--line-porcelain", commit, "--", path],
+        strip_left=False,
+    ):
+        if line.startswith("author "):
+            lines_by_author[line.split(" ", 1)[1]] += 1
+    return dict(lines_by_author)
+
+
 class OwnershipMachine(object):
     def __init__(self):
         self.blob_blame_cache = {}
 
-    def is_ownable_type(self, path):
-        path = str(path).lower()
-        if INVALID_RE.search(path):
-            return False
-        if "/migrations/" in path:
-            return False
-        if "vendor/" in path:
-            return False
-        return True
-
-    def blame_lines(self, commit, path):
-        lines_by_author = Counter()
-        for line in get_lines(
-            ["git", "blame", "-w", "-M", "-C", "--line-porcelain", commit, "--", path],
-            strip_left=False,
-        ):
-            if line.startswith("author "):
-                lines_by_author[line.split(" ", 1)[1]] += 1
-        return dict(lines_by_author)
-
     def process_commit(self, commit, progress=False):
-        paths = {}
-        lines_by_author = Counter()
-        for line in get_lines(["git", "ls-tree", "-r", commit]):
-            line = line.strip()
-            if line:
-                line = line.split(None, 3)
-                mode, kind, sha, path = line
-                if kind == "blob":
-                    if self.is_ownable_type(path):
-                        paths[path] = sha
+        paths = get_path_to_sha_map(commit)
 
         print(f"{commit}: {len(paths)} files", file=sys.stderr)
 
-        blob_blames = {}
-        path_sha_iter = click.progressbar(
-            list(paths.items()), item_show_func=lambda i: (i[0] if i else None)
-        )
-        path_sha_iter.is_hidden = not progress
-        with path_sha_iter:
-            for path, sha in path_sha_iter:
-                blob_blame = self.blob_blame_cache.get(sha)
-                if not blob_blame:
-                    blob_blame = self.blame_lines(commit, path)
-                    self.blob_blame_cache[sha] = blob_blame
-                blob_blames[sha] = blob_blame
+        def _cached_get_blob_blame(pair):
+            path, sha = pair
+            blob_blame = self.blob_blame_cache.get(sha)
+            if not blob_blame:
+                blob_blame = blame_lines(commit, path)
+                self.blob_blame_cache[sha] = blob_blame
+            return (pair, blob_blame)
 
-        for blob_blame in list(blob_blames.values()):
-            for author, n_lines in blob_blame.items():
-                lines_by_author[str(author)] += n_lines
-        return lines_by_author
+        blob_blames = {}
+        with ThreadPool() as pool:
+            work_item_iterator = click.progressbar(
+                iterable=(pool.imap_unordered(_cached_get_blob_blame, paths.items())),
+                length=len(paths),
+                item_show_func=lambda i: (i[0][0] if i else None),
+            )
+            work_item_iterator.is_hidden = not progress
+            with work_item_iterator:
+                for (path, sha), result in work_item_iterator:
+                    blob_blames[sha] = result
+
+        return count_lines_by_author(blob_blames)
 
     def calculate_over_time(self, ref, step=5):
         commits = {}
