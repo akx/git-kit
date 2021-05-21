@@ -1,3 +1,6 @@
+from functools import reduce
+from typing import List
+
 import click
 from collections import namedtuple
 
@@ -21,30 +24,31 @@ class AutofixupCommitInfo(
 @click.command()
 def autofixup():
     """
-    Attempt to figure out a commit to fix up a single changed file into.
+    Attempt to figure out a commit to fix up a set of changed files into.
     """
     changed = _autofixup_get_changed_files()
-    if len(changed) > 1:
-        croak("Not sure where to autofixup when more than one files have changed. :(")
 
-    filename = changed[0]
-
-    afis = [
-        AutofixupCommitInfo(*log_line.split(";", 3))
-        for log_line in get_lines(
-            [
-                "git",
-                "log",
-                "-n",
-                "15",
-                "--format=format:%H;%an;%ar;%s",
-                "--",
-                f":/{filename}",
-            ]
-        )
+    afis_per_filename = [
+        {afi.commit: afi for afi in get_file_autofixup_infos(filename)}
+        for filename in changed
     ]
+
+    # Reduce the list of commit->afi mappings to something that's common to all the changed files
+    common_afis = reduce(
+        lambda candidate_afis, file_afis: {
+            commit: afi
+            for (commit, afi) in candidate_afis.items()
+            if commit in file_afis
+        },
+        afis_per_filename,
+    )
+
+    afis = list(common_afis.values())
+
     if not afis:
-        return croak(f"Could not find any commit that would have touched {filename}")
+        return croak(
+            f"Could not find any single commit that would have touched all of {changed}"
+        )
 
     for i, log_line in enumerate(afis, 1):
         click.echo("".join((click.style(f"[{i:2d}] ", bold=True), log_line.info)))
@@ -72,6 +76,23 @@ def autofixup():
             f"Fixup done. Remember to `git rebase -i {main_branch}` or whatever! :)"
         )
     print("No fixup.")
+
+
+def get_file_autofixup_infos(filename: str) -> List[AutofixupCommitInfo]:
+    return [
+        AutofixupCommitInfo(*log_line.split(";", 3))
+        for log_line in get_lines(
+            [
+                "git",
+                "log",
+                "-n",
+                "15",
+                "--format=format:%H;%an;%ar;%s",
+                "--",
+                f":/{filename}",
+            ]
+        )
+    ]
 
 
 def _autofixup_get_changed_files():
