@@ -6,19 +6,19 @@ from .cli import cli
 
 def generate_commands_markdown() -> str:
     sio = io.StringIO()
-    print('| Command | Description |', file=sio)
-    print('| ------- | ----------- |', file=sio)
+    print("| Command | Description |", file=sio)
+    print("| ------- | ----------- |", file=sio)
     for name, cmd in sorted(cli.commands.items()):
-        print(f'| `{name}` | {cmd.help.strip()} |', file=sio)
+        print(f"| `{name}` | {cmd.help.strip()} |", file=sio)
     return sio.getvalue().strip()
 
 
 def replace_fragment(source: str, marker: str, value: str) -> str:
-    start_marker = f'<!-- start {marker} -->'
-    end_marker = f'<!-- end {marker} -->'
+    start_marker = f"<!-- start {marker} -->"
+    end_marker = f"<!-- end {marker} -->"
     return re.sub(
-        rf'{re.escape(start_marker)}(.+?){re.escape(end_marker)}',
-        f'{start_marker}\n{value}\n{end_marker}',
+        rf"{re.escape(start_marker)}(.+?){re.escape(end_marker)}",
+        f"{start_marker}\n{value}\n{end_marker}",
         source,
         flags=re.DOTALL,
     )
@@ -34,5 +34,5 @@ def main():
         f.write(readme)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

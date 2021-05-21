@@ -25,7 +25,9 @@ def get_git_message_lengths():
     message_lengths = []
 
     for message in messages:
-        lines = [line for line in (line.strip() for line in message.splitlines()) if line]
+        lines = [
+            line for line in (line.strip() for line in message.splitlines()) if line
+        ]
         if not lines:
             continue
         message_lengths.append(sum(len(line) for line in lines))
@@ -42,7 +44,12 @@ def message_stats():
     """
     Print out some statistics about the commit messages in the repo.
     """
-    (first_line_lengths, rest_line_lengths, message_line_counts, message_lengths) = get_git_message_lengths()
+    (
+        first_line_lengths,
+        rest_line_lengths,
+        message_line_counts,
+        message_lengths,
+    ) = get_git_message_lengths()
 
     print_stats("first line", first_line_lengths)
     print_stats("rest lines", rest_line_lengths)
