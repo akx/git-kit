@@ -7,23 +7,23 @@ from gitkit.util.shell import get_output, get_lines
 
 @click.command()
 @click.argument("ref1")
-@click.argument("range", required=False)
-@click.option("-w", is_flag=True, default=False, help="ignore whitespace?")
-@click.option("--diff-params", default="")
-def archaeology(ref1, range=None, w=False, diff_params=None):
+@click.option("--range", help="revision range (if not set, all revisions)", required=False)
+@click.option("-w", "--ignore-whitespace", "ignore_whitespace", is_flag=True, default=False, help="ignore whitespace?")
+@click.option("--diff-params", default="", help="other parameters for `git diff-tree`")
+def archaeology(ref1, range=None, ignore_whitespace=False, diff_params=None):
     """
     Find a commit most closely resembling a ref.
     """
     ref1 = get_output(f"git rev-parse {ref1}")
     if range:
-        refs_in_range = list(get_lines(f"git log --pretty=%%H {range}"))
+        refs_in_range = list(get_lines(f"git log --pretty=%H {range}"))
     else:
         refs_in_range = list(get_lines("git log --pretty=%H --all"))
 
     if ref1 in refs_in_range:
         refs_in_range.remove(ref1)
 
-    diff_params = (f"--numstat {diff_params or ''} {'-w' if w else ''}").strip()
+    diff_params = (f"--numstat {diff_params or ''} {'-w' if ignore_whitespace else ''}").strip()
 
     best_ref = None
     best_score = 0
