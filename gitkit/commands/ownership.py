@@ -10,23 +10,26 @@ import click
 
 from gitkit.util.shell import get_output, get_lines
 
-INVALID_EXTENSIONS = {
-    "css",
-    "dat",
-    "ds_store",
-    "eot",
-    "gif",
-    "jpeg",
-    "png",
-    "psd",
-    "svg",
-    "ttf",
-    "woff",
-    "jpg",
-    "deb",
-}
-
-INVALID_RE = re.compile(f"({'|'.join(INVALID_EXTENSIONS)})$", re.I)
+INVALID_SUFFIXES = (
+    ".css",
+    ".dat",
+    ".deb",
+    ".ds_store",
+    ".eot",
+    ".gif",
+    ".jpeg",
+    ".jpg",
+    ".png",
+    ".po",  # committer generally isn't the author of a language file
+    ".pot",  # committer generally isn't the author of a language file
+    ".psd",
+    ".svg",
+    ".ttf",
+    ".woff",
+    "package-lock.json",
+    "pnpm-lock.yaml",
+    "yarn.lock",
+)
 
 
 def count_lines_by_author(blob_blames):
@@ -39,7 +42,7 @@ def count_lines_by_author(blob_blames):
 
 def is_ownable_type(path):
     path = str(path).lower()
-    if INVALID_RE.search(path):
+    if path.endswith(INVALID_SUFFIXES):
         return False
     if "/migrations/" in path:
         return False
