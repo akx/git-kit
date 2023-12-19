@@ -2,7 +2,7 @@ import re
 
 import click
 
-from gitkit.util.shell import run, get_lines
+from gitkit.util.shell import get_lines, run
 
 
 @click.command()
@@ -18,12 +18,12 @@ def branches():
                 "-g",
                 "--pretty=format:%H:%ar:%gs",
                 "--grep-reflog=moving from",
-            ]
-        )
+            ],
+        ),
     )
     branch_options = []
     extant_branches = set(
-        l.strip("* ") for l in get_lines(["git", "branch", "--column=plain"])
+        line.strip("* ") for line in get_lines(["git", "branch", "--column=plain"])
     )
 
     for reflog_entry in reflog_entries[:100]:

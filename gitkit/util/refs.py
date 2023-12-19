@@ -1,4 +1,5 @@
 from gitkit.conf import main_branch_candidates
+
 from .shell import get_lines
 
 

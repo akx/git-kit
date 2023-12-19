@@ -35,7 +35,10 @@ def get_output(command, ignore_errors=False, strip_left=True, strip_right=True):
 
 def get_lines(command, ignore_errors=False, strip_left=True, strip_right=True):
     for line in get_output(
-        command, ignore_errors=ignore_errors, strip_left=False, strip_right=False
+        command,
+        ignore_errors=ignore_errors,
+        strip_left=False,
+        strip_right=False,
     ).splitlines():
         if strip_left:
             line = line.lstrip()

@@ -3,7 +3,7 @@ import re
 import click
 
 from gitkit.util.cli import yorn
-from gitkit.util.shell import get_output, get_lines, run
+from gitkit.util.shell import get_lines, get_output, run
 
 
 @click.command()
@@ -19,7 +19,7 @@ def go_back():
             "-g",
             "--pretty=format:%H:%ar:%gs",
             f"--grep-reflog=moving from .* to {current_branch}",
-        ]
+        ],
     )
     for reflog_entry in reflog_entries:
         branch_match = re.search("from (.+?) to (.+?)$", reflog_entry)

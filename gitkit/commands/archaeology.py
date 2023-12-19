@@ -2,13 +2,24 @@ from subprocess import CalledProcessError
 
 import click
 
-from gitkit.util.shell import get_output, get_lines
+from gitkit.util.shell import get_lines, get_output
 
 
 @click.command()
 @click.argument("ref1")
-@click.option("--range", help="revision range (if not set, all revisions)", required=False)
-@click.option("-w", "--ignore-whitespace", "ignore_whitespace", is_flag=True, default=False, help="ignore whitespace?")
+@click.option(
+    "--range",
+    help="revision range (if not set, all revisions)",
+    required=False,
+)
+@click.option(
+    "-w",
+    "--ignore-whitespace",
+    "ignore_whitespace",
+    is_flag=True,
+    default=False,
+    help="ignore whitespace?",
+)
 @click.option("--diff-params", default="", help="other parameters for `git diff-tree`")
 def archaeology(ref1, range=None, ignore_whitespace=False, diff_params=None):
     """
@@ -37,15 +48,17 @@ def archaeology(ref1, range=None, ignore_whitespace=False, diff_params=None):
         for ref in refs:
             try:
                 diff = [
-                    l.split("\t")
-                    for l in get_lines(
-                        f"git -c core.safecrlf=off diff-tree {ref} {ref1} {diff_params}"
+                    line.split("\t")
+                    for line in get_lines(
+                        f"git -c core.safecrlf=off diff-tree {ref} {ref1} {diff_params}",
                     )
                 ]
             except CalledProcessError:
                 continue
             delta_lines = sum(
-                int(l[0]) + int(l[1]) for l in diff if not (l[0] == "-" or l[1] == "-")
+                int(line[0]) + int(line[1])
+                for line in diff
+                if not (line[0] == "-" or line[1] == "-")
             )
             scores[ref] = delta_lines
             if not best_ref or delta_lines < best_score:

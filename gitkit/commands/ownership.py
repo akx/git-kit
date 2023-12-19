@@ -1,6 +1,5 @@
 # -- encoding: UTF-8 --
 import json
-import re
 import sys
 import time
 from collections import Counter
@@ -8,7 +7,7 @@ from multiprocessing.pool import ThreadPool
 
 import click
 
-from gitkit.util.shell import get_output, get_lines
+from gitkit.util.shell import get_lines, get_output
 
 INVALID_SUFFIXES = (
     ".css",
@@ -57,7 +56,7 @@ def get_path_to_sha_map(commit):
         line = line.strip()
         if line:
             line = line.split(None, 3)
-            mode, kind, sha, path = line
+            _mode, kind, sha, path = line
             if kind == "blob":
                 if is_ownable_type(path):
                     paths[path] = sha
@@ -149,6 +148,6 @@ def ownership(ref="HEAD", step=5, over_time=False):
                 {
                     "owners": dict(lines_by_author),
                     "total": sum(lines_by_author.values()),
-                }
-            )
+                },
+            ),
         )

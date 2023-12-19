@@ -3,7 +3,7 @@ import datetime
 import click
 
 from gitkit.util.cli import yorn
-from gitkit.util.shell import run, get_lines
+from gitkit.util.shell import get_lines, run
 
 
 def reltag_list():
@@ -13,7 +13,7 @@ def reltag_list():
 
 @click.command()
 def reltag():
-    """ Create an annotated timestamped release tag. """
+    """Create an annotated timestamped release tag."""
     now = datetime.datetime.now()
     tags = reltag_list()
     todays_prefix = f"rel/{now.strftime('%Y-%m-%d')}."

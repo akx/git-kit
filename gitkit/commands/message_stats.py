@@ -25,9 +25,7 @@ def get_git_message_lengths():
     message_lengths = []
 
     for message in messages:
-        lines = [
-            line for line in (line.strip() for line in message.splitlines()) if line
-        ]
+        lines = [line for line in (line.strip() for line in message.splitlines()) if line]
         if not lines:
             continue
         message_lengths.append(sum(len(line) for line in lines))

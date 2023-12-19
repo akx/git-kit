@@ -1,15 +1,13 @@
-import datetime
-
 import click
 
-from gitkit.util.cli import yorn, croak
-from gitkit.util.shell import run, get_lines
+from gitkit.util.cli import croak, yorn
+from gitkit.util.shell import get_lines, run
 
 
 @click.command()
 @click.option("--version", "-v", required=True)
 def vtag(version):
-    """ Create a version commit and release tag. """
+    """Create a version commit and release tag."""
     grep_output = list(get_lines(["git", "grep", version], ignore_errors=True))
     if not grep_output:
         croak(f"The string {version!r} does not appear in the current code. It should!")
@@ -17,7 +15,7 @@ def vtag(version):
     last_commits = get_lines(["git", "log", "--oneline", "-n 10"])
     if not any(version in line for line in last_commits):
         print(
-            f"None of the last 10 commits contain {version!r} in their commit message."
+            f"None of the last 10 commits contain {version!r} in their commit message.",
         )
         commit_message = f"Become {version}"
         if yorn(f"Create a {commit_message!r} commit?"):
