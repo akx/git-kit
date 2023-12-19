@@ -1,3 +1,36 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "git-kit"
+dynamic = ["version"]
+description = "A toolkit for Git"
+readme = "README.md"
+license = "MIT"
+authors = [
+    { name = "Aarni Koskela", email = "akx@iki.fi" },
+]
+dependencies = [
+    "click>=6.0",
+]
+
+[project.scripts]
+git-kit = "gitkit.cli:cli"
+
+[tool.hatch.version]
+path = "gitkit/__init__.py"
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/gitkit",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = [
+    "gitkit",
+]
+
 [tool.ruff]
 target-version = "py311"
 line-length = 100
