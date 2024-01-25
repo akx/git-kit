@@ -35,7 +35,9 @@ def commit_sizes():
             if match:
                 commit_size_map[commit_id] = ShortStat(*(int(x) for x in match.groups()))
     for (commit_id, subject), shortstat in sorted(
-        commit_size_map.items(), key=lambda x: x[1].abs_total, reverse=True,
+        commit_size_map.items(),
+        key=lambda x: x[1].abs_total,
+        reverse=True,
     ):
         short_commit_id = commit_id[:10]
         print(
