@@ -146,8 +146,9 @@ def ownership(ref="HEAD", step=5, over_time=False):
         print(
             json.dumps(
                 {
-                    "owners": dict(lines_by_author),
+                    "owners": dict(sorted(lines_by_author.items(), key=lambda x: x[1], reverse=True)),
                     "total": sum(lines_by_author.values()),
                 },
+                ensure_ascii=False,
             ),
         )
