@@ -22,10 +22,12 @@ INVALID_SUFFIXES = (
     ".po",  # committer generally isn't the author of a language file
     ".pot",  # committer generally isn't the author of a language file
     ".psd",
+    ".snap",
     ".svg",
     ".ttf",
     ".woff",
     "package-lock.json",
+    "package.json",
     "pnpm-lock.yaml",
     "yarn.lock",
 )
