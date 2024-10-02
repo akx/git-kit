@@ -6,11 +6,16 @@ from gitkit.util.shell import get_lines, run
 
 @click.command()
 @click.option("--version", "-v", required=True)
-def vtag(version):
+@click.option("--force/--no-force", "-f")
+def vtag(version, force: bool):
     """Create a version commit and release tag."""
     grep_output = list(get_lines(["git", "grep", version], ignore_errors=True))
     if not grep_output:
-        croak(f"The string {version!r} does not appear in the current code. It should!")
+        msg = f"The string {version!r} does not appear in the current code. It should!"
+        if force:
+            print(f"Warning: {msg}")
+        else:
+            croak(msg)
 
     last_commits = get_lines(["git", "log", "--oneline", "-n 10"])
     if not any(version in line for line in last_commits):
