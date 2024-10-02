@@ -70,7 +70,7 @@ def blame_lines(commit, path):
         strip_left=False,
     ):
         if line.startswith("author "):
-            lines_by_author[line.split(" ", 1)[1]] += 1
+            lines_by_author[line.partition("author ")[2]] += 1
     return dict(lines_by_author)
 
 

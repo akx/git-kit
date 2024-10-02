@@ -13,7 +13,8 @@ def get_commit_hash_and_subject(ref):
             ref,
         ],
     )
-    return hash_and_subject.split("\t", 1)
+    hash, _, subject = hash_and_subject.partition("\t")
+    return hash, subject
 
 
 @click.command()
