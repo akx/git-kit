@@ -70,7 +70,7 @@ def autofixup():
         print("Okay, well, we can also fixup...")
 
     if yorn(f"Fixup onto {click.style(str(afi), bold=True)}?", default=True):
-        run(["git", "commit", "--fixup", afi.commit])
+        run(["git", "commit", "--no-verify", "--fixup", afi.commit])
         main_branch = get_main_branch()
         return print(
             f"Fixup done. Remember to `git rebase -i {main_branch}` or whatever! :)",
