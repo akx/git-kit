@@ -1,5 +1,6 @@
 # -- encoding: UTF-8 --
 import json
+import re
 import sys
 import time
 from collections import Counter
@@ -52,16 +53,24 @@ def is_ownable_type(path):
     return True
 
 
-def get_path_to_sha_map(commit):
+def get_path_to_sha_map(commit, *, include_pattern=None):
+    if include_pattern:
+        include_pattern_regex = re.compile(include_pattern)
+    else:
+        include_pattern_regex = None
     paths = {}
     for line in get_lines(["git", "ls-tree", "-r", commit]):
         line = line.strip()
-        if line:
-            line = line.split(None, 3)
-            _mode, kind, sha, path = line
-            if kind == "blob":
-                if is_ownable_type(path):
-                    paths[path] = sha
+        if not line:
+            continue
+        line = line.split(None, 3)
+        _mode, kind, sha, path = line
+        if kind == "blob":
+            if not is_ownable_type(path):
+                continue
+            if include_pattern_regex and not include_pattern_regex.match(path):
+                continue
+            paths[path] = sha
     return paths
 
 
@@ -80,8 +89,8 @@ class OwnershipMachine(object):
     def __init__(self):
         self.blob_blame_cache = {}
 
-    def process_commit(self, commit, progress=False):
-        paths = get_path_to_sha_map(commit)
+    def process_commit(self, commit, *, progress=False, include_pattern=None):
+        paths = get_path_to_sha_map(commit, include_pattern=include_pattern)
 
         print(f"{commit}: {len(paths)} files", file=sys.stderr)
 
@@ -107,7 +116,7 @@ class OwnershipMachine(object):
 
         return count_lines_by_author(blob_blames)
 
-    def calculate_over_time(self, ref, step=5):
+    def calculate_over_time(self, ref, step=5, include_pattern=None):
         commits = {}
         for line in get_lines(["git", "log", "--pretty=format:%at %H", ref]):
             time_str, hash = line.split()
@@ -120,7 +129,7 @@ class OwnershipMachine(object):
             if i % step:
                 continue
             print(f"Processing commit {i} / {len(commits)}...", file=sys.stderr)
-            lines_by_author = self.process_commit(commit)
+            lines_by_author = self.process_commit(commit, include_pattern=include_pattern)
             day_datum = {
                 "date": date,
                 "commit": str(commit),
@@ -133,18 +142,19 @@ class OwnershipMachine(object):
 @click.command()
 @click.option("--step", type=int, default=5)
 @click.option("--over-time/--no-over-time", default=False)
-def ownership(ref="HEAD", step=5, over_time=False):
+@click.option("--include-pattern")
+def ownership(ref="HEAD", step=5, over_time=False, include_pattern=None):
     """
     Figure out total authorship, line-by-line, of the repository.
     """
     om = OwnershipMachine()
     if over_time:
-        for datum in om.calculate_over_time(ref, step=step):
+        for datum in om.calculate_over_time(ref, step=step, include_pattern=include_pattern):
             print(json.dumps(datum))
     else:
         commit = get_output(f"git rev-parse {ref}")
         print(f"Processing commit {commit}...", file=sys.stderr)
-        lines_by_author = om.process_commit(commit, progress=True)
+        lines_by_author = om.process_commit(commit, progress=True, include_pattern=include_pattern)
         print(
             json.dumps(
                 {
