@@ -50,7 +50,7 @@ def calculate_statistics(line_lengths: list[int]):
     percentiles = {}
 
     for length in common_lengths:
-        lines_shorter = sum(1 for l in line_lengths if l <= length)
+        lines_shorter = sum(1 for line_length in line_lengths if line_length <= length)
         percentage = (lines_shorter / len(line_lengths)) * 100
         percentiles[length] = percentage
 
@@ -109,7 +109,7 @@ def print_results(stats, percentiles, optimal_length, target_percentile):
 
 def create_histogram(line_lengths: list[int], bins: int = 20, max_length: int = 200):
     """Create a simple ASCII histogram of line lengths."""
-    filtered_lengths = [l for l in line_lengths if l <= max_length]
+    filtered_lengths = [line_length for line_length in line_lengths if line_length <= max_length]
     histogram = defaultdict(int)
 
     for length in filtered_lengths:
